@@ -20,7 +20,6 @@ public class Day05 {
 
         for (String id : ids) {
             boolean isRepeated = false;
-            System.out.println("Checking ID: " + id);
                 Long idValue = Long.parseLong(id.trim());
                 for (String range : ranges) {
                     String[] parts = range.split("-");
