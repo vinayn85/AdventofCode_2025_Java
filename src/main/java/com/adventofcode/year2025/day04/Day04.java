@@ -1,5 +1,6 @@
 package com.adventofcode.year2025.day04;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.adventofcode.utils.InputReader;
@@ -60,7 +61,47 @@ public class Day04 {
     }
 
     private Long part2(List<String> input) {
-        return 0L;
+        List<String> currentGrid = new ArrayList<>(input);
+        int totalRemoved = 0;
+        boolean changed;
+        
+        do {
+            changed = false;
+            List<String> nextGrid = new ArrayList<>();
+            
+            for (int i = 0; i < currentGrid.size(); i++) {
+                StringBuilder newRow = new StringBuilder();
+                for (int j = 0; j < currentGrid.get(i).length(); j++) {
+                    if (currentGrid.get(i).charAt(j) == paperBale) {
+                        int currentBaleCount = 0;
+                        
+                        // Check all 8 directions with boundary checks
+                        if (i > 0 && currentGrid.get(i - 1).charAt(j) == paperBale) currentBaleCount++;
+                        if (i < currentGrid.size() - 1 && currentGrid.get(i + 1).charAt(j) == paperBale) currentBaleCount++;
+                        if (j > 0 && currentGrid.get(i).charAt(j - 1) == paperBale) currentBaleCount++;
+                        if (j < currentGrid.get(i).length() - 1 && currentGrid.get(i).charAt(j + 1) == paperBale) currentBaleCount++;
+                        if (i > 0 && j > 0 && currentGrid.get(i - 1).charAt(j - 1) == paperBale) currentBaleCount++;
+                        if (i > 0 && j < currentGrid.get(i).length() - 1 && currentGrid.get(i - 1).charAt(j + 1) == paperBale) currentBaleCount++;
+                        if (i < currentGrid.size() - 1 && j > 0 && currentGrid.get(i + 1).charAt(j - 1) == paperBale) currentBaleCount++;
+                        if (i < currentGrid.size() - 1 && j < currentGrid.get(i).length() - 1 && currentGrid.get(i + 1).charAt(j + 1) == paperBale) currentBaleCount++;
+                        
+                        if (currentBaleCount < 4) {
+                            newRow.append('X');
+                            totalRemoved++;
+                            changed = true;
+                        } else {
+                            newRow.append(paperBale);
+                        }
+                    } else {
+                        newRow.append(currentGrid.get(i).charAt(j));
+                    }
+                }
+                nextGrid.add(newRow.toString());
+            }
+            currentGrid = nextGrid;
+        } while (changed);
+        
+        return (long) totalRemoved;
     }
 
 }
