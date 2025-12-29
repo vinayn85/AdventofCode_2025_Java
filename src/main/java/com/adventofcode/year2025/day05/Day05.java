@@ -27,7 +27,7 @@ public class Day05 {
                     Long endRange = Long.parseLong(parts[1].trim());
                     
                     // Check if ID is within range using comparison instead of iteration. Tricky bit. Large number ranges will kill the program.
-                    // So very eassy to miss this
+                    // So very easy to miss this
                     if (idValue >= startRange && idValue <= endRange) {
                         if (!isRepeated) {
                             freshIdCount++;
@@ -40,7 +40,44 @@ public class Day05 {
     }
 
     public Long part2() {
-        return 0L;
+        List<String> ranges = getIngredientIDRange();
+        List<long[]> rangePairs = new ArrayList<>();
+        
+        // Parse all ranges
+        for (String range : ranges) {
+            String[] parts = range.split("-");
+            long start = Long.parseLong(parts[0].trim());
+            long end = Long.parseLong(parts[1].trim());
+            rangePairs.add(new long[]{start, end});
+        }
+        
+        // Sort ranges by start value
+        rangePairs.sort((a, b) -> Long.compare(a[0], b[0]));
+        
+        // Merge overlapping ranges
+        List<long[]> mergedRanges = new ArrayList<>();
+        for (long[] current : rangePairs) {
+            if (mergedRanges.isEmpty()) {
+                mergedRanges.add(current);
+            } else {
+                long[] last = mergedRanges.get(mergedRanges.size() - 1);
+                if (current[0] <= last[1] + 1) {
+                    // Overlapping or adjacent, merge them
+                    last[1] = Math.max(last[1], current[1]);
+                } else {
+                    // No overlap, add new range
+                    mergedRanges.add(current);
+                }
+            }
+        }
+        
+        // Calculate total unique IDs covered
+        long totalIds = 0;
+        for (long[] range : mergedRanges) {
+            totalIds += (range[1] - range[0] + 1);
+        }
+        
+        return totalIds;
     }
 
     private List<String> getIngredientIDRange() {
