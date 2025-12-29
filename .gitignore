@@ -29,3 +29,6 @@ target
 ## IDE ##
 .idea
 .vscode
+
+## Java ##
+*.class
