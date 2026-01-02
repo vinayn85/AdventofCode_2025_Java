@@ -16,33 +16,33 @@ public class Day06 {
     }
 
     public Long part1(List<String> lines) {
-        Long grandTotal = 0L;
+        long grandTotal = 0L;
         List<List<String>> rearrangedLines = new ArrayList<>();
         List<List<String>> cleanedLines = new ArrayList<>();
         lines.forEach(line -> {
-            List<String> cleanedLine = Arrays.stream(line.trim().replaceAll("\s+", ",").split(",")).toList();
+            List<String> cleanedLine = Arrays.stream(line.trim().replaceAll("\\s+", ",").split(",")).toList();
             cleanedLines.add(cleanedLine);
         });
 
-        Long columns = Long.valueOf(cleanedLines.get(0).size());
-        Long rows = Long.valueOf(cleanedLines.size());
+        int columns = cleanedLines.getFirst().size();
+        int rows = cleanedLines.size();
 
-        for (Long i = 0L; i < columns; i++) {
+        for (int i = 0; i < columns; i++) {
             List<String> rearrangedLine = new ArrayList<>();
-            for (Long j = 0L; j < rows; j++) {
-                rearrangedLine.add(cleanedLines.get(j.intValue()).get(i.intValue()));
+            for (int j = 0; j < rows; j++) {
+                rearrangedLine.add(cleanedLines.get(j).get(i));
             }
             rearrangedLines.add(rearrangedLine);
         }
         for (List<String> line : rearrangedLines) {
             if (line.contains("+")) {
-                Long sum = line.stream()
+                long sum = line.stream()
                         .filter(item -> !item.equals("*") && !item.equals("+"))
                         .mapToLong(Long::parseLong)
                         .sum();
                 grandTotal += sum;
             } else if (line.contains("*")) {
-                Long product = line.stream()
+                long product = line.stream()
                         .filter(item -> !item.equals("*") && !item.equals("+"))
                         .mapToLong(Long::parseLong)
                         .reduce(1, (a, b) -> a * b);
@@ -106,7 +106,7 @@ public class Day06 {
                         }
                     }
 
-                    if (columnNumber.length() > 0) {
+                    if (!columnNumber.isEmpty()) {
                         numbers.add(Long.parseLong(columnNumber.toString()));
                     }
                     if (columnOperator != null) {
@@ -149,7 +149,7 @@ public class Day06 {
                     }
                 }
 
-                if (columnNumber.length() > 0) {
+                if (!columnNumber.isEmpty()) {
                     numbers.add(Long.parseLong(columnNumber.toString()));
                 }
                 if (columnOperator != null) {
