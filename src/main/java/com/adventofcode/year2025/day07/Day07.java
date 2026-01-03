@@ -2,8 +2,10 @@ package com.adventofcode.year2025.day07;
 
 import com.adventofcode.utils.InputReader;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Day07 {
@@ -43,8 +45,30 @@ public class Day07 {
     }
 
     public long part2(List<String> lines) {
-        // Part 2 implementation - to be determined based on actual problem requirements
-        return 0L;
+        if (lines == null || lines.isEmpty()) {
+            return 0;
+        }
+
+        char[][] grid = parseGrid(lines);
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        // Find starting position 'S' in first row
+        int startCol = -1;
+        for (int col = 0; col < cols; col++) {
+            if (grid[0][col] == 'S') {
+                startCol = col;
+                break;
+            }
+        }
+
+        if (startCol == -1) {
+            return 0;
+        }
+
+        // Use memoization to cache the number of timelines from each position
+        Map<String, Long> memo = new HashMap<>();
+        return countTimelines(grid, 0, startCol, memo);
     }
 
     private char[][] parseGrid(List<String> lines) {
@@ -89,5 +113,40 @@ public class Day07 {
         }
 
         return 0;
+    }
+
+    private long countTimelines(char[][] grid, int row, int col, Map<String, Long> memo) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        // If we go off the grid, this completes one timeline
+        if (row < 0 || row >= rows || col < 0 || col >= cols) {
+            return 1;
+        }
+
+        // Check memoization cache
+        String key = row + "," + col;
+        if (memo.containsKey(key)) {
+            return memo.get(key);
+        }
+
+        char cell = grid[row][col];
+        long result;
+
+        if (cell == '^') {
+            // Hit a splitter - branch into two timelines
+            long leftCount = countTimelines(grid, row + 1, col - 1, memo);
+            long rightCount = countTimelines(grid, row + 1, col + 1, memo);
+            result = leftCount + rightCount;
+        } else if (cell == '.' || cell == 'S') {
+            // Continue straight down
+            result = countTimelines(grid, row + 1, col, memo);
+        } else {
+            // Invalid cell
+            result = 0;
+        }
+
+        memo.put(key, result);
+        return result;
     }
 }
