@@ -22,6 +22,7 @@ public class Day07 {
             return 0;
         }
 
+
         char[][] grid = parseGrid(lines);
         int rows = grid.length;
         int cols = grid[0].length;
