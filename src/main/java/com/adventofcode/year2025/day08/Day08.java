@@ -7,11 +7,15 @@ public class Day08 {
   public static void main(String[] args) {
     Day08 day = new Day08();
     List<String> lines = InputReader.readLines("day08/input.txt");
-    System.out.println("Part 1: " + day.part1(lines));
+
+    // Determine if this is sample data (20 boxes) or real data
+    int numConnections = lines.size() == 20 ? 10 : 1000;
+
+    System.out.println("Part 1: " + day.part1(lines, numConnections));
     System.out.println("Part 2: " + day.part2(lines));
   }
 
-  private Long part1(List<String> lines) {
+  private Long part1(List<String> lines, int numConnections) {
     // Parse all junction box coordinates
     List<Point> points = new ArrayList<>();
     for (String line : lines) {
@@ -35,18 +39,18 @@ public class Day08 {
     // Sort edges by distance (ascending)
     Collections.sort(edges);
 
-    // Use Union-Find to connect the 1000 closest pairs
+    // Use Union-Find to attempt connecting the closest pairs
+    // Note: Some connections may be redundant (boxes already in same circuit)
     UnionFind uf = new UnionFind(points.size());
-    int connectionsCount = 0;
-    int targetConnections = Math.min(1000, edges.size()); // Can't make more connections than edges
+    int connectionsAttempted = 0;
+    int targetConnections = Math.min(numConnections, edges.size());
 
     for (Edge edge : edges) {
-      if (connectionsCount >= targetConnections) {
+      if (connectionsAttempted >= targetConnections) {
         break;
       }
-      if (uf.union(edge.from, edge.to)) {
-        connectionsCount++;
-      }
+      uf.union(edge.from, edge.to);
+      connectionsAttempted++;
     }
 
     // Count the size of each circuit
